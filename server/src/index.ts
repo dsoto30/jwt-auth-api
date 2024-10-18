@@ -1,23 +1,22 @@
-import express, {NextFunction, Request, Response} from "express";
+import express, {NextFunction, Request, Response, Application} from "express";
 import dotenv from "dotenv";
 import cors from "cors"
 import { AppDataSource } from "./data-source";
-const app = express();
+import userRouter from "./users/users.routes";
+
+const app: Application = express();
 dotenv.config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+app.use("/users", userRouter);
 
-app.get("/", (req: Request, res, next: NextFunction) => {
-    res.send("hello world");
-});
 
-app.get("*", (req: Request, res, next: NextFunction) => {
+app.get("*", (req: Request, res: Response, next: NextFunction) => {
     res.status(404).json({message: "Not Found"});
 })
-
 
 AppDataSource.initialize().then(() => {
     app.listen(5000, () => {

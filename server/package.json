@@ -1,9 +1,9 @@
 {
   "scripts": {
     "watch": "tsc --watch",
-    "start:prod": "node ./dist/index.js",
-    "start": "nodemon src/index.ts",
-    "dev": "concurrently \"npm run watch\" \"npm run start\"",
+    "start": "node ./dist/index.js",
+    "start:dev": "nodemon src/index.ts",
+    "dev": "concurrently \"npm run watch\" \"npm run start:dev\"",
     "build": "rimraf ./dist && tsc",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "migration": "npm run typeorm migration:run -- -d ./src/data-source.ts"
@@ -15,6 +15,7 @@
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.7.4",
     "@types/pg": "^8.11.10",
+    "@types/pino": "^7.0.4",
     "concurrently": "^9.0.1",
     "dotenv": "^16.4.5",
     "nodemon": "^3.1.5",
@@ -26,8 +27,11 @@
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.21.0",
+    "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.0",
+    "pino": "^9.4.0",
+    "pino-pretty": "^11.2.2",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20"
   }

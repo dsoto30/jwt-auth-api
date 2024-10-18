@@ -1,13 +1,22 @@
-import { NextFunction, Request, Response } from "express";
 
 
-const userRouter = require("express").Router();
 
-userRouter.post("/regiter", (req: Request, res: Response) => {
-    res.send("register")
-})
+import {Router} from "express";
+import { register, test, login, getUsers } from "./users.controller";
+import { jwtAuthorization } from "../middleware/jwt-middleware";
+
+const userRouter = Router();
 
 
-userRouter.get("login", (req: Request, res: Response) => {
-    res.send("login");
-})
+
+userRouter.post("/register", register);
+
+userRouter.get("/test", test);
+
+userRouter.post("/login", login);
+
+userRouter.get("/getUsers", jwtAuthorization, getUsers);
+
+
+
+export default userRouter;

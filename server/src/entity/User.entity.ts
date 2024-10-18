@@ -2,12 +2,9 @@ import {Column, Entity, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm
 
 @Entity({ name: "users" })
 export class User {
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryGeneratedColumn()
     id: number;
-
-    @Column({nullable: false})
-    name: string;
-
+    
     @Column({nullable: false, unique: true})
     email: string;
 
