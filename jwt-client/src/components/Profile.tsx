@@ -1,9 +1,25 @@
-import React from 'react'
-import { useAuthContext } from './AuthProvider'
+import React, { useEffect, useState } from "react";
+
+const url = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export default function Profile() {
+    const [message, setMessage] = useState("");
 
-  return (
-    <div>Profile</div>
-  )
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch(`${url}/users/test`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+            const data = await response.json();
+            setMessage(JSON.stringify(data));
+        };
+
+        fetchData();
+    }, []);
+
+    return <div>{message}</div>;
 }

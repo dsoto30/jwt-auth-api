@@ -2,7 +2,6 @@ import { AuthRequest } from "../types/AuthRequest";
 import { NextFunction, Request, Response } from "express";
 import { generateToken, comparePassword } from "../helper/jwt_helper";
 import { getErrorMessage } from "../helper/getErrorMessage";
-import logger from "../logger";
 
 import { insertUser, getUserByEmail, getAllUsers } from "./users.services";
 
@@ -41,8 +40,8 @@ export async function login(req: Request<{}, {}, AuthRequest>, res: Response, ne
         if (user !== null) {
             if (comparePassword(req.body.password, user.password)) {
                 const token = generateToken(user.id, user.email);
-                res.cookie("token", token, { httpOnly: true, expires: new Date(Date.now() + 2 * 60 * 60 * 1000) });
-                res.status(200).send({ success: true, token: token });
+                res.cookie("token", token, { httpOnly: true });
+                res.status(200).send({ success: true, message: "user logged in" });
             }
             else {
                 res.status(404).send({ success: false, message: "Wrong password" });
@@ -67,4 +66,11 @@ export async function getUsers(req: Request, res: Response, next: NextFunction) 
     } catch (error) {
         res.status(500).send({ success: false, message: getErrorMessage(error) });
     }
+}
+
+export async function logout(req: Request, res: Response, next: NextFunction) {
+
+    res.clearCookie("token");
+    res.status(200).send({ success: true, message: "user logged out" });
+
 }
