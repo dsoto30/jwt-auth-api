@@ -28,3 +28,8 @@ export async function getUserByEmail(email: string): Promise<User | null> {
     return user;
 }
 
+export async function getUserById(id: number): Promise<User | null> {
+    const user = await userRepository.findOneBy({ id: id });
+    return user;
+}
+

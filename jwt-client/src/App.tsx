@@ -1,17 +1,18 @@
-import "@mantine/core/styles.css";
-
-import { MantineProvider } from "@mantine/core";
-
-const theme = {
-  fontFamily: "Inter, sans-serif",
-  defaultRadius: "md",
-}
+import { Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Home from "./components/Home";
+import Profile from "./components/Profile";
 
 function App() {
-
-  return <MantineProvider theme={theme}>
-    <div>Hello World</div>
-  </MantineProvider>
+    return (
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
+        </Routes>
+    );
 }
 
-export default App
+export default App;
