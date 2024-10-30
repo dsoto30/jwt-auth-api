@@ -1,41 +1,25 @@
-import express, {NextFunction, Request, Response} from "express";
+import express, {NextFunction, Request, Response, Application} from "express";
 import dotenv from "dotenv";
-import { Pool } from "pg";
+import cors from "cors"
+import { AppDataSource } from "./data-source";
+import userRouter from "./users/users.routes";
 
-
-
-const app = express();
+const app: Application = express();
 dotenv.config();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+app.use("/users", userRouter);
 
 
-console.log(`DB_HOST: ${process.env.POSTGRES_HOST}`);
-
-const pool = new Pool({
-    host: process.env.DB_HOST,
-    user: process.env.POSTGRES_USER,
-    database: process.env.POSTGRES_DB,
-    password: process.env.POSTGRES_PASSWORD
-});
-
-const connection = async () => {
-    try {
-        await pool.connect();
-        console.log("connected");
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-connection();
-
-
-
-app.get("/", (req: Request, res, next: NextFunction) => {
-    res.send("hello world");
-});
-
-app.listen(5000, () => {
-    console.log(`server started on port ${5000}`);
+app.get("*", (req: Request, res: Response, next: NextFunction) => {
+    res.status(404).json({message: "Not Found"});
 })
+
+AppDataSource.initialize().then(() => {
+    app.listen(5000, () => {
+        console.log("Server is running on port 5000");
+    });
+}).catch(error => console.log(error));

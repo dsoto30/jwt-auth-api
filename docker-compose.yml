@@ -1,15 +1,25 @@
 services:
+
   ts-api:
-    build: 
+    build:
       context: ./server
-    ports:
-      - "5000:5000"
+    develop:
+      watch:
+        - action: sync
+          path: ./server/src
+          target: /usr/src/app/src
+        - action: rebuild
+          path: ./server/package.json
     environment:
-      DB_HOST: ${DB_HOST}
+      POSTGRES_HOST: db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    restart: always
+      JWT_SECRET: ${JWT_SECRET}
+    ports: 
+      - "5000:5000"
+    volumes:
+      - api-log:/usr/src/app/logs
     depends_on:
       - db
 
@@ -24,15 +34,31 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     restart: always
 
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "5050:80"
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - db
+
   client:
     build:
       context: ./jwt-client
-    
     ports:
       - "3000:80"
+    depends_on:
+      - ts-api
 
 volumes:
   data: {}
+  api-log: {}
+  pgadmin-data: {}
 
 
 
