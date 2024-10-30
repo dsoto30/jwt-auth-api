@@ -13,14 +13,15 @@ app.use(cors());
 
 app.use("/api/users", userRouter);
 
+app.get("/running", (req: Request, res: Response, next: NextFunction) => {
+    res.status(200).json({message: "API is running"});
+})
 
 app.get("*", (req: Request, res: Response, next: NextFunction) => {
     res.status(404).json({message: "Not Found"});
 })
 
-app.get("/api", (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).json({message: "API is running"});
-})
+
 
 AppDataSource.initialize().then(() => {
     app.listen(5000, () => {

@@ -21,5 +21,10 @@ export default function Profile() {
         fetchData();
     }, []);
 
-    return <div>{message}</div>;
+    return (
+        <div>
+            {message}
+            <p>Hello testing hot reload</p>
+        </div>
+    );
 }

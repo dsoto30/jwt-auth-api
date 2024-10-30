@@ -5,12 +5,8 @@ services:
       context: ./server
     develop:
       watch:
-        - action: sync
-          path: ./server/src
-          target: /usr/src/app/src
         - action: rebuild
-          path: ./server/package.json
-    
+          path: ./server/src/package.json
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -20,7 +16,7 @@ services:
     ports: 
       - "5000:5000"
     volumes:
-      - api-log:/usr/src/app/logs
+      - ./server:/usr/src/app
     depends_on:
       - db
 
@@ -51,6 +47,10 @@ services:
   client:
     build:
       context: ./jwt-client
+    develop:
+      watch:
+        - action: rebuild
+          path: ./jwt-client/package.json
     ports:
       - "8080:8080"
     depends_on:
@@ -58,7 +58,6 @@ services:
 
 volumes:
   data: {}
-  api-log: {}
   pgadmin-data: {}
 
 
