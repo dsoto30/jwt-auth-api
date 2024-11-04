@@ -3,26 +3,21 @@ import { NextFunction, Request, Response } from "express";
 import { generateToken, comparePassword } from "../helper/jwt_helper";
 import { getErrorMessage } from "../helper/getErrorMessage";
 
-import { insertUser, getUserByEmail, getAllUsers } from "./users.services";
+//import { insertUser,getUserByEmail, getAllUsers } from "./users.services";
+import { insertUser } from "./users.services";
+import logger from "../logger";
 
+
+interface TokenRequest extends Request {
+    user?: any
+}
 
 export async function register(req: Request<{}, {}, AuthRequest>, res: Response, next: NextFunction) {
     try {
 
-        const userExists = await getUserByEmail(req.body.email);
-        if (userExists !== null) {
-            res.status(404).send({ success: false, message: "User already exists" });
-            return
-        }
-
-
         const user = await insertUser(req.body.email, req.body.password);
-        if (user) {
-            res.status(200).send({ success: true, message: "user created" });
-        }
-        else {
-            res.status(404).send({ success: false, message: "User not created" });
-        }
+        console.log("user", user);
+        res.status(200).send({ success: true, message: "user registered" });
     }
     catch (err) {
         res.status(500).send({ success: false, message: getErrorMessage(err) });
@@ -33,6 +28,7 @@ export function test(req: Request, res: Response, next: NextFunction) {
     res.send({ success: true, message: "test" }); 
 }
 
+/*
 export async function login(req: Request<{}, {}, AuthRequest>, res: Response, next: NextFunction) {
     try {
 
@@ -41,7 +37,7 @@ export async function login(req: Request<{}, {}, AuthRequest>, res: Response, ne
             if (comparePassword(req.body.password, user.password)) {
                 const token = generateToken(user.id, user.email);
                 res.cookie("token", token, { httpOnly: true });
-                res.status(200).send({ success: true, message: "user logged in" });
+                res.status(200).send({ success: true, message: "user logged in", email: user.email, id: user.id });
             }
             else {
                 res.status(404).send({ success: false, message: "Wrong password" });
@@ -74,3 +70,9 @@ export async function logout(req: Request, res: Response, next: NextFunction) {
     res.status(200).send({ success: true, message: "user logged out" });
 
 }
+
+
+export function getTokenInformation(req: TokenRequest, res: Response, next: NextFunction){
+    return res.status(200).send({ success: true, user: req.user });
+}
+*/
