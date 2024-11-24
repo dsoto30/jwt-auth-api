@@ -8,6 +8,7 @@ import { hashPassword } from "../helper/jwt_helper";
 
 
 
+
 export async function insertUser(email: string, password: string): Promise<User | null> {
     try {
 
@@ -26,20 +27,25 @@ export async function insertUser(email: string, password: string): Promise<User 
 }
 
 
-/*
 
 export async function getAllUsers(): Promise<User[]> {
+
+    const userRepository = AppDataSource.getRepository(User);
     const users = await userRepository.find();
     return users;
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
+
+    const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOneBy({ email: email });
     return user;
 }
 
 export async function getUserById(id: number): Promise<User | null> {
+
+    const userRepository = AppDataSource.getRepository(User);
     const user = await userRepository.findOneBy({ id: id });
     return user;
 }
-*/
+

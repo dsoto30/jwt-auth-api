@@ -44,15 +44,15 @@ services:
     depends_on:
       - db
 
-  client:
-    build:
-      context: ./jwt-client
-    volumes:
-      - ./jwt-client:/usr/src/app
-    ports:
-      - "8080:8080"
-    depends_on:
-      - ts-api
+  # client:
+  #   build:
+  #     context: ./jwt-client
+  #   volumes:
+  #     - ./jwt-client/src:/usr/src/app/src
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - ts-api
 
 volumes:
   data: {}

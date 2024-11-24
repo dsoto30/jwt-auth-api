@@ -1,19 +1,24 @@
 import { verifyToken } from "../helper/jwt_helper";
 import {Request, Response, NextFunction} from "express";
+import { CustomRequest } from "../types/AuthRequest";
+import { getUserByEmail, getUserById } from "../users/users.services";
+import { JwtPayload } from "jsonwebtoken";
+import logger from "../logger";
 
 
-interface CustomRequest extends Request {
-    user?: any
-}
 
 export function jwtAuthorization(req: CustomRequest, res: Response, next: NextFunction) {
-    if (req.cookies.token) {
-        const token = req.cookies.token;
-        const user = verifyToken(token);
-        if (user) {
-            req.user = user;
+    if (req.headers.cookie?.includes("token")) {
+        const token = req.headers.cookie.split("=")[1];
+        const payload = verifyToken(token);
+        if (payload && 'userId' in (payload as JwtPayload)) {
+            req.user_id = (payload as JwtPayload).userId;
+            next();
         }
-        next();
+        else {
+            res.status(401).send({ success: false, message: "Unauthorized" });
+        }
+        
     }
     else {
         res.status(401).send({ success: false, message: "Unauthorized" });

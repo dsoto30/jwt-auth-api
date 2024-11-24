@@ -1,8 +1,5 @@
-
-
-
 import {Router} from "express";
-import { register, test } from "./users.controller";
+import { register, test, login, getUsers, logout, getUserInformation } from "./users.controller";
 import { jwtAuthorization } from "../middleware/jwt-middleware";
 
 const userRouter = Router();
@@ -11,17 +8,16 @@ const userRouter = Router();
 
 userRouter.post("/register", register);
 
-userRouter.get("/test", test);
+userRouter.get("/test", test);                  
 
-/*
 
 userRouter.post("/login", login);
 
 userRouter.get("/getUsers", jwtAuthorization, getUsers);
-*/
-userRouter.get("/profile",  (req, res) => {
-    res.send({ success: true, message: "user profile" });
-});
+
+userRouter.get("/logout", jwtAuthorization, logout);
+
+userRouter.get("/profile", jwtAuthorization, getUserInformation);
 
 
 
