@@ -1,22 +1,26 @@
 import { verifyToken } from "../helper/jwt_helper";
 import {Request, Response, NextFunction} from "express";
+import { CustomRequest } from "../types/AuthRequest";
+import { JwtPayload } from "jsonwebtoken";
 
-interface CustomRequest extends Request {
-    user?: any
-}
+
 
 export function jwtAuthorization(req: CustomRequest, res: Response, next: NextFunction) {
-    if (req.headers.authorization) {
-        const token = req.headers.authorization.split(" ")[1];
-        const user = verifyToken(token);
-        if (user) {
-            req.user = user;
+    if (req.headers.cookie?.includes("token")) {
+        const token = req.cookies["token"];
+        console.log(`token: ${token}`);
+        const payload = verifyToken(token);
+        if (payload && 'userId' in (payload as JwtPayload)) {
+            req.user_id = (payload as JwtPayload).userId;
+            next();
         }
-
-        next();
+        else {
+            res.status(401).send({ success: false, message: "Token is invalid" });
+        }
+        
     }
     else {
-        res.status(401).send({ success: false, message: "Unauthorized" });
+        res.status(401).send({ success: false, message: "Unauthorized: Token is missing" });
     }
 
 }

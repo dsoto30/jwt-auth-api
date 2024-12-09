@@ -15,5 +15,21 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  
+  preview: {
+    port: 8080,
+    strictPort: true
+  },
+  server: {
+    port: 8080,
+    strictPort: true,
+    host: true,
+    proxy: {
+      "/api": {
+        target: "http://ts-api:5000",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      }
+    }
+  }
 })
