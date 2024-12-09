@@ -16,7 +16,7 @@ services:
     ports: 
       - "5000:5000"
     volumes:
-      - ./server:/usr/src/app
+      - ./server/src:/usr/src/app/src
     depends_on:
       - db
 
@@ -48,7 +48,7 @@ services:
     build:
       context: ./jwt-client
     volumes:
-      - ./jwt-client:/usr/src/app
+      - ./jwt-client/src:/usr/src/app/src
     ports:
       - "8080:8080"
     depends_on:

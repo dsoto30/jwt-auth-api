@@ -1,23 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { Card, Container } from "react-bootstrap";
+import { useAuthContext } from "../hooks/authHooks";
 
 export default function Profile() {
-    const [message, setMessage] = useState("");
+    const {
+        state: { user },
+    } = useAuthContext();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch("api/users/test", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
-            const data = await response.json();
-            setMessage(JSON.stringify(data));
+    const logout = () => {
+        const logoutProcess = async () => {
+            try {
+                await fetch("api/users/logout", {
+                    credentials: "include",
+                });
+                window.location.reload();
+            } catch (err) {
+                console.error(err);
+            }
         };
+        logoutProcess();
+    };
 
-        fetchData();
-    }, []);
-
-    return <div>{message}</div>;
+    return (
+        <Container className="d-flex justify-content-center mt-5">
+            <Card style={{ width: "18rem" }} className="shadow">
+                <Card.Body>
+                    <Card.Title className="text-center">
+                        User Profile
+                    </Card.Title>
+                    <Card.Text>
+                        <strong>User ID:</strong> {user ? user.id : "Unknown"}
+                    </Card.Text>
+                    <Card.Text>
+                        <strong>Email:</strong> {user ? user.email : "Unknown"}
+                    </Card.Text>
+                    <button
+                        className="btn btn-primary rounded"
+                        onClick={logout}
+                    >
+                        Logout
+                    </button>
+                </Card.Body>
+            </Card>
+        </Container>
+    );
 }
