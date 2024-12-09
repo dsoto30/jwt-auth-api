@@ -1,23 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useAuthContext } from "../hooks/authHooks";
 
 export default function Profile() {
-    const [message, setMessage] = useState("");
+    const {
+        state: { user },
+        isAuthenticating,
+    } = useAuthContext();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch("api/users/test", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
-            const data = await response.json();
-            setMessage(JSON.stringify(data));
-        };
+    if (isAuthenticating) {
+        return <div>Loading...</div>;
+    }
 
-        fetchData();
-    }, []);
-
-    return <div>{message}</div>;
+    return (
+        <div>
+            <h1>Profile: Welcome !</h1>
+            <p>{user ? user.email : "No user logged in"}</p>
+            <p>Your id is: {user ? user.id : "No user logged in"}</p>
+        </div>
+    );
 }

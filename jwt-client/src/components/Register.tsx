@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../hooks/authHooks";
+import AppNavbar from "./AppNavbar";
+import { AuthActionType } from "../reducers/AuthReducer";
 
 const EMAIL_REGEXP =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -14,11 +16,10 @@ interface Error {
 }
 
 export default function Register() {
+    const { dispatch } = useAuthContext();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState({ email: "", password: "" });
-
-    const navigate = useNavigate();
 
     const validateForm = () => {
         const validationError: Error = { email: "", password: "" };
@@ -43,21 +44,40 @@ export default function Register() {
         e.preventDefault();
 
         if (validateForm()) {
-            console.log("submit", email, password);
+            const requestBody = JSON.stringify({
+                email: email,
+                password: password,
+            });
+            const response = await fetch("api/users/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: requestBody,
+            });
+            const data = await response.json();
+            if (!data.success) {
+                setError({ email: data.message, password: "" });
+                return;
+            }
+
+            dispatch({
+                type: AuthActionType.LOGIN,
+                payload: { id: data.id, email: data.email },
+            });
 
             setEmail("");
             setPassword("");
             setError({ email: "", password: "" });
-            navigate("/login");
         } else {
-            /*
-            Not valid form
-            */
+            console.log("error", error);
         }
     };
 
     return (
         <>
+            <AppNavbar />
             <Container>
                 <Row className="vh-100 d-flex justify-content-center align-items-center">
                     <Col md={10} lg={8} xs={12}>
@@ -128,17 +148,6 @@ export default function Register() {
                                             </Button>
                                         </div>
                                     </Form>
-                                    <div className="mt-3">
-                                        <p className="mb-0 text-center">
-                                            Already have an account?{" "}
-                                            <a
-                                                href="/login"
-                                                className="text-primary fw-bold"
-                                            >
-                                                Sign In
-                                            </a>
-                                        </p>
-                                    </div>
                                 </div>
                             </Card.Body>
                         </Card>
